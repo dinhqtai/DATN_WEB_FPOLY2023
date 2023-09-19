@@ -3,7 +3,7 @@ import { Space, Table, Tag, Input, Button } from 'antd';
 import CreateQlPhim from './create';
 import EditQlPhim from './edit';
 
-const { Column, ColumnGroup } = Table;
+const { Column } = Table;
 
 interface DataType {
     key: React.Key;
@@ -43,6 +43,20 @@ const data: DataType[] = [
 
 const AdminQlPhim: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
+    const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+    const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+        console.log('', newSelectedRowKeys);
+        setSelectedRowKeys(newSelectedRowKeys);
+    };
+    const DeleteAll = () => {
+        console.log(selectedRowKeys);
+
+    }
+    const rowSelection = {
+        selectedRowKeys,
+        onChange: onSelectChange,
+    };
+    const hasSelected = selectedRowKeys.length > 0;
     const searchProject = (value: string) => {
         console.log(value);
         setSearchTerm(value);
@@ -56,7 +70,14 @@ const AdminQlPhim: React.FC = () => {
                     onChange={(e) => searchProject(e.target.value)} />
                 <CreateQlPhim />
             </div>
-            <Table dataSource={data}>
+            <span style={{ marginLeft: 8 }}>
+                {hasSelected ? (<Button onClick={DeleteAll}>
+                    {`Delete ${selectedRowKeys.length} items`}
+                </Button>) : (
+                    <div></div>
+                )}
+            </span>
+            <Table dataSource={data} rowSelection={rowSelection} >
                 <Column title="First Name" dataIndex="firstName" key="firstName" />
                 <Column title="Last Name" dataIndex="lastName" key="lastName" />
                 <Column title="Age" dataIndex="age" key="age" />
